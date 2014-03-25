@@ -1,0 +1,5 @@
+*.class
+
+# androidpn-server-bin-tomcat
+androidpn-server-bin-tomcat/WebRoot/WEB-INF/classes/
+/androidpn-server-bin-tomcat/WebRoot/WEB-INF/classes
