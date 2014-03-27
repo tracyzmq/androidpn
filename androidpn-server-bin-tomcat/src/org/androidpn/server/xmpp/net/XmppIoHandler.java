@@ -76,6 +76,7 @@ public class XmppIoHandler implements IoHandler {
      */
     public void sessionCreated(IoSession session) throws Exception {
         log.debug("sessionCreated()...");
+        session.getConfig().setIdleTime(IdleStatus.BOTH_IDLE, 180);
     }
 
     /**
