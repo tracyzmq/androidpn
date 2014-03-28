@@ -124,7 +124,7 @@
 	</bean>
 
 	<bean id="ioAcceptor" class="org.apache.mina.transport.socket.nio.NioSocketAcceptor"
-		destroy-method="disponse">
+	init-method="bind" destroy-method="unbind">
 		<property name="defaultLocalAddress" value=":5222" />
 		<property name="handler" ref="xmppHandler" />
 		<property name="filterChainBuilder" ref="filterChainBuilder" />
