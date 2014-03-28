@@ -15,8 +15,6 @@
  */
 package org.androidpn.client;
 
-import java.util.Random;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -25,6 +23,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
+
+import java.util.Random;
 
 /** 
  * This class is to notify the user of messages with NotificationManager.
@@ -42,6 +42,7 @@ public class Notifier {
     private SharedPreferences sharedPrefs;
 
     private NotificationManager notificationManager;
+    private static int requestCode = 0;
 
     public Notifier(Context context) {
         this.context = context;
@@ -111,12 +112,13 @@ public class Notifier {
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-            PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
+            PendingIntent contentIntent = PendingIntent.getActivity(context, requestCode,
                     intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             notification.setLatestEventInfo(context, title, message,
                     contentIntent);
-            notificationManager.notify(random.nextInt(), notification);
+            notificationManager.notify(requestCode, notification);
+            requestCode++;
 
             //            Intent clickIntent = new Intent(
             //                    Constants.ACTION_NOTIFICATION_CLICKED);
