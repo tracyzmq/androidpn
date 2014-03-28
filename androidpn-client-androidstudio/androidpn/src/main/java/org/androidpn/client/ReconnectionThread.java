@@ -37,6 +37,7 @@ public class ReconnectionThread extends Thread {
     }
 
     public void run() {
+        waiting = 0;
         try {
             while (!isInterrupted()) {
                 Log.d(LOGTAG, "Trying to reconnect in " + waiting()
@@ -55,12 +56,23 @@ public class ReconnectionThread extends Thread {
     }
 
     private int waiting() {
-        if (waiting > 20) {
-            return 600;
+        // 10秒一次
+        if (waiting < 12) {
+            return 10;
         }
-        if (waiting > 13) {
+        // 30秒一次
+        if (waiting < 18) {
+            return 30;
+        }
+        // 1分钟一次
+        if (waiting < 23) {
+            return 60;
+        }
+        // 5分钟一次
+        if (waiting < 30) {
             return 300;
         }
-        return waiting <= 7 ? 10 : 60;
+        // 10分钟一次
+        return 600;
     }
 }
