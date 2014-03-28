@@ -15,17 +15,18 @@
  */
 package org.androidpn.client;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.Future;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.os.Handler;
+import android.util.Log;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketIDFilter;
@@ -35,15 +36,14 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Registration;
 import org.jivesoftware.smack.provider.ProviderManager;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.os.Handler;
-import android.util.Log;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.Future;
 
 /**
  * This class is to manage the XMPP connection between client and server.
- * 
+ *
  * @author Sehwan Noh (devnoh@gmail.com)
  */
 public class XmppManager {
@@ -230,6 +230,7 @@ public class XmppManager {
     }
 
     private boolean isRegistered() {
+        //FIXME 在这里需要判断服务器上是否已经存在对应的UUID，以确认是否注册
         return sharedPrefs.contains(Constants.XMPP_USERNAME)
                 && sharedPrefs.contains(Constants.XMPP_PASSWORD);
     }
@@ -276,7 +277,7 @@ public class XmppManager {
     }
 
     /**
-     * A runnable task to connect the server. 
+     * A runnable task to connect the server.
      */
     private class ConnectTask implements Runnable {
 
@@ -325,7 +326,7 @@ public class XmppManager {
     }
 
     /**
-     * A runnable task to register a new user onto the server. 
+     * A runnable task to register a new user onto the server.
      */
     private class RegisterTask implements Runnable {
 
@@ -337,12 +338,14 @@ public class XmppManager {
 
         public void run() {
             Log.i(LOGTAG, "RegisterTask.run()...");
-
+            final String uuid = UUIDUtil.getID(context);
             if (!xmppManager.isRegistered()) {
-                final String newUsername = newRandomUUID();
-                final String newPassword = newRandomUUID();
 
-                Registration registration = new Registration();
+                // 密码也设成UUID，以使应用程序清除数据之后，再注册的用户username是一样的。
+                final String newUsername = uuid;
+                final String newPassword = uuid;
+
+                final Registration registration = new Registration();
 
                 PacketFilter packetFilter = new AndFilter(new PacketIDFilter(
                         registration.getPacketID()), new PacketTypeFilter(
@@ -356,17 +359,22 @@ public class XmppManager {
                         Log.d("RegisterTask.PacketListener", "packet="
                                 + packet.toXML());
 
+
                         if (packet instanceof IQ) {
                             IQ response = (IQ) packet;
+                            // 用于判断是否注册。如果已经注册过，会返回一个409错误（表示冲突）。
+                            String responseStr = null;
                             if (response.getType() == IQ.Type.ERROR) {
-                                if (!response.getError().toString().contains(
-                                        "409")) {
+                                responseStr = response.getError().toString();
+                                if (!responseStr.contains("409")) {
                                     Log.e(LOGTAG,
                                             "Unknown error while registering XMPP account! "
                                                     + response.getError()
-                                                            .getCondition());
+                                                    .getCondition()
+                                    );
                                 }
-                            } else if (response.getType() == IQ.Type.RESULT) {
+                            }
+                            if (response.getType() == IQ.Type.RESULT || (responseStr != null && responseStr.contains("409"))) {
                                 xmppManager.setUsername(newUsername);
                                 xmppManager.setPassword(newPassword);
                                 Log.d(LOGTAG, "username=" + newUsername);
@@ -407,7 +415,7 @@ public class XmppManager {
     }
 
     /**
-     * A runnable task to log into the server. 
+     * A runnable task to log into the server.
      */
     private class LoginTask implements Runnable {
 
@@ -443,7 +451,7 @@ public class XmppManager {
                     PacketListener packetListener = xmppManager
                             .getNotificationPacketListener();
                     connection.addPacketListener(packetListener, packetFilter);
-                    
+
                     getConnection().startKeepAliveThread(xmppManager);
 
                 } catch (XMPPException e) {
@@ -454,7 +462,7 @@ public class XmppManager {
                     String errorMessage = e.getMessage();
                     if (errorMessage != null
                             && errorMessage
-                                    .contains(INVALID_CREDENTIALS_ERROR_CODE)) {
+                            .contains(INVALID_CREDENTIALS_ERROR_CODE)) {
                         xmppManager.reregisterAccount();
                         return;
                     }
