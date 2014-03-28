@@ -20,12 +20,19 @@
 
 package org.jivesoftware.smack;
 
+import android.util.Log;
+
+import org.androidpn.client.LogUtil;
+import org.apache.harmony.javax.security.auth.callback.CallbackHandler;
+import org.apache.http.conn.util.InetAddressUtils;
 import org.jivesoftware.smack.proxy.ProxyInfo;
 import org.jivesoftware.smack.util.DNSUtil;
 
-import javax.net.SocketFactory;
-import org.apache.harmony.javax.security.auth.callback.CallbackHandler;
 import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import javax.net.SocketFactory;
 
 /**
  * Configuration to use while establishing the connection to the server. It is possible to
@@ -37,7 +44,7 @@ import java.io.File;
  * @author Gaston Dombiak
  */
 public class ConnectionConfiguration implements Cloneable {
-
+    private String LOG_TAG = LogUtil.makeLogTag(ConnectionConfiguration.class);
     /**
      * Hostname of the XMPP server. Usually servers use the same service name as the name
      * of the server. However, there are some servers like google where host would be
@@ -230,6 +237,15 @@ public class ConnectionConfiguration implements Cloneable {
      * @return the host to use when establishing the connection.
      */
     public String getHost() {
+        // 如果不是IP，则尝试将它以域名进行IP转换。
+        if(!InetAddressUtils.isIPv4Address(host) && !InetAddressUtils.isIPv6Address(host)) {
+            try {
+                InetAddress address = InetAddress.getByName(host);
+                host =  address.getHostAddress();
+            } catch (UnknownHostException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+            }
+        }
         return host;
     }
 

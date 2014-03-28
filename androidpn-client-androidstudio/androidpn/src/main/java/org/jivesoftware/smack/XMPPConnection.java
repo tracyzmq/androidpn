@@ -559,16 +559,6 @@ public class XMPPConnection extends Connection {
     private void connectUsingConfiguration(ConnectionConfiguration config) throws XMPPException {
         String host = config.getHost();
 
-        // 如果不是IP，则尝试将它以域名进行IP转换。
-        if(!InetAddressUtils.isIPv4Address(host) && !InetAddressUtils.isIPv6Address(host)) {
-            try {
-                InetAddress address = InetAddress.getByName(host);
-                host =  address.getHostAddress();
-            } catch (UnknownHostException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
-            }
-        }
-
         int port = config.getPort();
         try {
             if (config.getSocketFactory() == null) {
