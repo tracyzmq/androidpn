@@ -56,23 +56,14 @@ public class ReconnectionThread extends Thread {
     }
 
     private int waiting() {
-        // 10秒一次
-        if (waiting < 12) {
-            return 10;
+        // 20秒一次
+        if (waiting < 15) {
+            return 20;
         }
-        // 30秒一次
-        if (waiting < 18) {
-            return 30;
-        }
-        // 1分钟一次
-        if (waiting < 23) {
+        // 60秒一次
+        if (waiting < 20) {
             return 60;
         }
-        // 5分钟一次
-        if (waiting < 30) {
-            return 300;
-        }
-        // 10分钟一次
-        return 600;
+        return waiting < 30 ? 300 : 600;
     }
 }
