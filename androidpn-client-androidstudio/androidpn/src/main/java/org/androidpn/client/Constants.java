@@ -21,16 +21,6 @@ package org.androidpn.client;
  * @author Sehwan Noh (devnoh@gmail.com)
  */
 public class Constants {
-    public static final String PROP_NAME = "androidpn";
-
-    public static final String PROP_API_KEY = "apiKey";
-    public static final String PROP_XMPP_HOST = "xmppHost";
-    public static final String PROP_XMPP_PORT = "xmppPort";
-    public static final String PROP_PACKET_LISTENER = "packetlistener";
-    public static final String PROP_IQ = "iq";
-
-    public static final String DEFAULT_HOST = "127.0.0.1";
-    public static final String DEFAULT_PORT = "5222";
 
     public static final String SHARED_PREFERENCE_NAME = "client_preferences";
 
@@ -79,8 +69,6 @@ public class Constants {
     public static final String NOTIFICATION_MESSAGE = "NOTIFICATION_MESSAGE";
 
     public static final String NOTIFICATION_URI = "NOTIFICATION_URI";
-
-    public static final String NOTIFICATION_TIME = "NOTIFICATION_TIME";
 
     // INTENT ACTIONS
 
