@@ -96,7 +96,16 @@ public class XmppManager {
         password = sharedPrefs.getString(Constants.XMPP_PASSWORD, "");
 
         connectionListener = new PersistentConnectionListener(this);
-        notificationPacketListener = new NotificationPacketListener(this);
+        if (NotifierConfig.packetListener == null) {
+            notificationPacketListener = new NotificationPacketListener(this);
+        } else {
+            try {
+                notificationPacketListener = (PacketListener) Class.forName(NotifierConfig.packetListener).getConstructor(XmppManager.class).newInstance(this);
+            } catch (Exception e) {
+                Log.e(LOGTAG, e.getMessage(), e);
+                notificationPacketListener = new NotificationPacketListener(this);
+            }
+        }
 
         handler = new Handler();
         taskList = new ArrayList<Runnable>();
@@ -443,10 +452,14 @@ public class XmppManager {
                         xmppManager.getConnection().addConnectionListener(
                                 xmppManager.getConnectionListener());
                     }
-
-                    // packet filter
-                    PacketFilter packetFilter = new PacketTypeFilter(
-                            NotificationIQ.class);
+                    PacketFilter packetFilter = null;
+                    if(NotifierConfig.iq == null) {
+                        // packet filter
+                        packetFilter = new PacketTypeFilter(
+                                NotificationIQ.class);
+                    } else {
+                        packetFilter = new PacketTypeFilter(Class.forName(NotifierConfig.iq));
+                    }
                     // packet listener
                     PacketListener packetListener = xmppManager
                             .getNotificationPacketListener();

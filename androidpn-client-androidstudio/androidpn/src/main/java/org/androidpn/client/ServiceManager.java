@@ -70,12 +70,16 @@ public final class ServiceManager {
         //        //        }
 
         props = loadProperties();
-        apiKey = props.getProperty("apiKey", "");
-        xmppHost = props.getProperty("xmppHost", "127.0.0.1");
-        xmppPort = props.getProperty("xmppPort", "5222");
+        apiKey = props.getProperty(Constants.PROP_API_KEY, "");
+        xmppHost = props.getProperty(Constants.PROP_XMPP_HOST, Constants.DEFAULT_HOST);
+        xmppPort = props.getProperty(Constants.PROP_XMPP_PORT, Constants.DEFAULT_PORT);
+        NotifierConfig.packetListener = props.getProperty(Constants.PROP_PACKET_LISTENER, null);
+        NotifierConfig.iq = props.getProperty(Constants.PROP_IQ, null);
         Log.i(LOGTAG, "apiKey=" + apiKey);
         Log.i(LOGTAG, "xmppHost=" + xmppHost);
         Log.i(LOGTAG, "xmppPort=" + xmppPort);
+        Log.i(LOGTAG, "packetListener=" + NotifierConfig.packetListener);
+        Log.i(LOGTAG, "iq=" + NotifierConfig.iq);
 
         sharedPrefs = context.getSharedPreferences(
                 Constants.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
