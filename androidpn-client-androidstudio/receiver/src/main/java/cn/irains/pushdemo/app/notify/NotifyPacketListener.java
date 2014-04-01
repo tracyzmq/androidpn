@@ -29,7 +29,7 @@ import org.jivesoftware.smack.packet.Packet;
 /** 
  * This class notifies the receiver of incoming notifcation packets asynchronously.  
  *
- * @author Sehwan Noh (devnoh@gmail.com)
+ * @author Geek_Soledad (msdx.android@qq.com)
  */
 public class NotifyPacketListener implements PacketListener {
 

@@ -30,7 +30,7 @@ import org.androidpn.client.LogUtil;
 /** 
  * Activity for displaying the notification setting view.
  *
- * @author Sehwan Noh (devnoh@gmail.com)
+ * @author GeekSoledad (msdx.android@qq.com)
  */
 public class NotifySettingsActivity extends PreferenceActivity {
 

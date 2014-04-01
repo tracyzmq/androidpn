@@ -11,7 +11,7 @@ import java.io.Serializable;
  * User: Geek_Soledad(msdx.android@qq.com)
  * Date: 2014-03-25
  * Time: 17:59
- * FIXME
+ * 消息实体类。
  */
 public class NotifyIQ extends IQ implements Serializable{
 

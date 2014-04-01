@@ -13,7 +13,7 @@ import org.androidpn.client.LogUtil;
  * User: Geek_Soledad(msdx.android@qq.com)
  * Date: 2014-03-26
  * Time: 13:06
- * FIXME
+ * 实现数据库的创建升级操作。
  */
 public class DBOpenHelper extends SQLiteOpenHelper {
     private static final String LOG_TAG = LogUtil.makeLogTag(DBOpenHelper.class);

@@ -32,7 +32,7 @@ import cn.irains.pushdemo.app.notify.NotifyIQ;
  * Broadcast receiver that handles push notification messages from the server.
  * This should be registered as receiver in AndroidManifest.xml. 
  * 
- * @author Sehwan Noh (devnoh@gmail.com)
+ * @author Geek_Solodad (msdx.android@qq.com)
  */
 public final class NotifyReceiver extends BroadcastReceiver {
 

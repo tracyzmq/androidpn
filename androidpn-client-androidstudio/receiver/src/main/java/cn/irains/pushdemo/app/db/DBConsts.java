@@ -6,7 +6,7 @@ package cn.irains.pushdemo.app.db;/**
  * User: Geek_Soledad(msdx.android@qq.com)
  * Date: 2014-03-26
  * Time: 13:08
- * FIXME
+ * 数据库常量类。
  */
 public interface DBConsts {
 

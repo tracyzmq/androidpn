@@ -10,7 +10,7 @@ import org.xmlpull.v1.XmlPullParser;
  * User: Geek_Soledad(msdx.android@qq.com)
  * Date: 2014-03-25
  * Time: 18:02
- * FIXME
+ * 消息实体转化。
  */
 public class NotifyIQProvider implements IQProvider {
     public NotifyIQProvider() {

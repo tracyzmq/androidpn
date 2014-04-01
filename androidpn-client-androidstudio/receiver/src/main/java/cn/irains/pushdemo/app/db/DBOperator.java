@@ -16,7 +16,7 @@ import cn.irains.pushdemo.app.notify.NotifyIQ;
  * User: Geek_Soledad(msdx.android@qq.com)
  * Date: 2014-03-26
  * Time: 13:25
- * FIXME
+ * 数据库操作类。
  */
 public class DBOperator {
     private DBOpenHelper dbOpenHelper;
