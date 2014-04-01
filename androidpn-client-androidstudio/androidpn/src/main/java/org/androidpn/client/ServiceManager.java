@@ -40,7 +40,7 @@ public final class ServiceManager {
 
     private Properties props;
 
-    private String version = "0.5.0";
+    private String version = "0.7.0";
 
     private String apiKey;
 

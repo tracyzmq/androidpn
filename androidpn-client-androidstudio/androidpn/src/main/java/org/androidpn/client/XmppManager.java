@@ -321,17 +321,17 @@ public class XmppManager {
                     if(NotifierConfig.iqProvider == null) {
                         // packet provider
                         ProviderManager.getInstance().addIQProvider("notification",
-                                "androidpn:iq:notification",
+                                Constants.DEFAULT_NAMESPACE,
                                 new NotificationIQProvider());
                     } else {
                         try {
                             ProviderManager.getInstance().addIQProvider("notification",
-                                    "androidpn:iq:notification",
+                                    Constants.DEFAULT_NAMESPACE,
                                     Class.forName(NotifierConfig.iqProvider).newInstance());
                         } catch (Exception e) {
                             Log.e(LOGTAG, e.getMessage(), e);
                             ProviderManager.getInstance().addIQProvider("notification",
-                                    "androidpn:iq:notification",
+                                    Constants.DEFAULT_NAMESPACE,
                                     new NotificationIQProvider());
                         }
                     }

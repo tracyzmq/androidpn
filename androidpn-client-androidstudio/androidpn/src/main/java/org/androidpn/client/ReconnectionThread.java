@@ -47,6 +47,7 @@ public class ReconnectionThread extends Thread {
                 waiting++;
             }
         } catch (final InterruptedException e) {
+            Log.e(LOGTAG, e.getMessage(), e);
             xmppManager.getHandler().post(new Runnable() {
                 public void run() {
                     xmppManager.getConnectionListener().reconnectionFailed(e);
