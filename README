@@ -48,6 +48,10 @@ androidpn-server-bin-tomcat：
 
 --------------------------------------------------
 新功能：
+androidpn-client-androidstudio
+对消息进行序列化，可直接通过intent传递对象
+可通过配置文件配置IQ,IQProvider, PacketListener的子类实现，及打开通知时弹出的Activity。
+
 androidpn-server
 新添加了两个接口：
 package org.androidpn.server.console.api;
