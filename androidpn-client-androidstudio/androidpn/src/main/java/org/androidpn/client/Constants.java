@@ -22,6 +22,24 @@ package org.androidpn.client;
  */
 public class Constants {
 
+    // PROPERTY
+    public static final String PROP_NAME = "androidpn";
+
+    // PROPERTY KEYS
+    public static final String PROP_API_KEY = "apiKey";
+    public static final String PROP_XMPP_HOST = "xmppHost";
+    public static final String PROP_XMPP_PORT = "xmppPort";
+    public static final String PROP_PACKET_LISTENER = "packetListener";
+    public static final String PROP_IQ = "iq";
+    public static final String PROP_IQ_PROVIDER = "iqProvider";
+    public static final String PROP_NOTIFY_ACTIVITY= "notifyActivity";
+
+    // PROPERTY DEFAULT VALUES
+    public static final String DEFAULT_HOST = "127.0.0.1";
+    public static final String DEFAULT_PORT = "5222";
+
+
+    // PREFERENCE
     public static final String SHARED_PREFERENCE_NAME = "client_preferences";
 
     // PREFERENCE KEYS
@@ -70,6 +88,8 @@ public class Constants {
 
     public static final String NOTIFICATION_URI = "NOTIFICATION_URI";
 
+    public static final String NOTIFICATION_TIME = "NOTIFICATION_TIME";
+
     // INTENT ACTIONS
 
     public static final String ACTION_SHOW_NOTIFICATION = "org.androidpn.client.SHOW_NOTIFICATION";
@@ -77,5 +97,11 @@ public class Constants {
     public static final String ACTION_NOTIFICATION_CLICKED = "org.androidpn.client.NOTIFICATION_CLICKED";
 
     public static final String ACTION_NOTIFICATION_CLEARED = "org.androidpn.client.NOTIFICATION_CLEARED";
+
+    // INTENT_EXTRA
+    public static final String INTENT_EXTRA_IQ = "INTENT_IQ";
+
+    // NAMESPACE
+    public static final String DEFAULT_NAMESPACE = "androidpn:iq:notification";
 
 }

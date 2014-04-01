@@ -72,7 +72,7 @@ public class XmppManager {
 
     private ConnectionListener connectionListener;
 
-    private PacketListener notificationPacketListener;
+    private PacketListener packetListener;
 
     private Handler handler;
 
@@ -96,7 +96,18 @@ public class XmppManager {
         password = sharedPrefs.getString(Constants.XMPP_PASSWORD, "");
 
         connectionListener = new PersistentConnectionListener(this);
-        notificationPacketListener = new NotificationPacketListener(this);
+        if (NotifierConfig.packetListener == null) {
+            Log.i(LOGTAG, "the packetListener is " + NotifierConfig.packetListener);
+            packetListener = new NotificationPacketListener(this);
+        } else {
+            try {
+                packetListener = (PacketListener) Class.forName(NotifierConfig.packetListener).getConstructor(XmppManager.class).newInstance(this);
+                Log.i(LOGTAG, "the packetListener is " + packetListener.getClass().toString());
+            } catch (Exception e) {
+                Log.e(LOGTAG, e.getMessage(), e);
+                packetListener = new NotificationPacketListener(this);
+            }
+        }
 
         handler = new Handler();
         taskList = new ArrayList<Runnable>();
@@ -127,7 +138,7 @@ public class XmppManager {
                 if (xmppManager.isConnected()) {
                     Log.d(LOGTAG, "terminatePersistentConnection()... run()");
                     xmppManager.getConnection().removePacketListener(
-                            xmppManager.getNotificationPacketListener());
+                            xmppManager.getPacketListener());
                     xmppManager.getConnection().disconnect();
                 }
                 xmppManager.runTask();
@@ -165,8 +176,8 @@ public class XmppManager {
         return connectionListener;
     }
 
-    public PacketListener getNotificationPacketListener() {
-        return notificationPacketListener;
+    public PacketListener getPacketListener() {
+        return packetListener;
     }
 
     public void startReconnectionThread() {
@@ -307,11 +318,23 @@ public class XmppManager {
                     connection.connect();
                     Log.i(LOGTAG, "XMPP connected successfully");
 
-                    // packet provider
-                    ProviderManager.getInstance().addIQProvider("notification",
-                            "androidpn:iq:notification",
-                            new NotificationIQProvider());
-
+                    if(NotifierConfig.iqProvider == null) {
+                        // packet provider
+                        ProviderManager.getInstance().addIQProvider("notification",
+                                "androidpn:iq:notification",
+                                new NotificationIQProvider());
+                    } else {
+                        try {
+                            ProviderManager.getInstance().addIQProvider("notification",
+                                    "androidpn:iq:notification",
+                                    Class.forName(NotifierConfig.iqProvider).newInstance());
+                        } catch (Exception e) {
+                            Log.e(LOGTAG, e.getMessage(), e);
+                            ProviderManager.getInstance().addIQProvider("notification",
+                                    "androidpn:iq:notification",
+                                    new NotificationIQProvider());
+                        }
+                    }
                 } catch (XMPPException e) {
                     Log.e(LOGTAG, "XMPP connection failed", e);
                 }
@@ -443,13 +466,17 @@ public class XmppManager {
                         xmppManager.getConnection().addConnectionListener(
                                 xmppManager.getConnectionListener());
                     }
-
-                    // packet filter
-                    PacketFilter packetFilter = new PacketTypeFilter(
-                            NotificationIQ.class);
+                    PacketFilter packetFilter = null;
+                    if(NotifierConfig.iq == null) {
+                        // packet filter
+                        packetFilter = new PacketTypeFilter(
+                                NotificationIQ.class);
+                    } else {
+                        packetFilter = new PacketTypeFilter(Class.forName(NotifierConfig.iq));
+                    }
                     // packet listener
                     PacketListener packetListener = xmppManager
-                            .getNotificationPacketListener();
+                            .getPacketListener();
                     connection.addPacketListener(packetListener, packetFilter);
 
                     getConnection().startKeepAliveThread(xmppManager);

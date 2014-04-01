@@ -22,6 +22,8 @@ package org.jivesoftware.smack.packet;
 
 import org.jivesoftware.smack.util.StringUtils;
 
+import java.io.Serializable;
+
 /**
  * The base IQ (Info/Query) packet. IQ packets are used to get and set information
  * on the server, including authentication, roster operations, and creating
@@ -39,7 +41,9 @@ import org.jivesoftware.smack.util.StringUtils;
  *
  * @author Matt Tucker
  */
-public abstract class IQ extends Packet {
+public abstract class IQ extends Packet implements Serializable{
+
+    private static final long serialVersionUID = 2L;
 
     private Type type = Type.GET;
 
@@ -187,7 +191,7 @@ public abstract class IQ extends Packet {
      *      <li>IQ.Type.ERROR
      * </ul>
      */
-    public static class Type {
+    public static class Type implements Serializable{
 
         public static final Type GET = new Type("get");
         public static final Type SET = new Type("set");

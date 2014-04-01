@@ -24,6 +24,8 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.jivesoftware.smack.packet.IQ;
+
 import java.util.Random;
 
 /** 
@@ -34,8 +36,6 @@ import java.util.Random;
 public class Notifier {
 
     private static final String LOGTAG = LogUtil.makeLogTag(Notifier.class);
-
-    private static final Random random = new Random(System.currentTimeMillis());
 
     private Context context;
 
@@ -51,6 +51,34 @@ public class Notifier {
         this.notificationManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
     }
+
+    public void notify(IQ iq, String title, String message) {
+        if (!isNotificationEnabled()) {
+            Log.w(LOGTAG, "Notificaitons disabled.");
+            return;
+        }
+        if (isNotificationToastEnabled()) {
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+        }
+
+        // Notification
+        Notification notification = createNotification(message);
+        if (NotifierConfig.notifyActivity != null) {
+            try {
+                Intent intent = new Intent(context, Class.forName(NotifierConfig.notifyActivity));
+                intent.putExtra(Constants.INTENT_EXTRA_IQ, iq);
+                PendingIntent contentIntent = PendingIntent.getActivity(context, requestCode,
+                        intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                notification.setLatestEventInfo(context, title, message,
+                        contentIntent);
+                notificationManager.notify(requestCode, notification);
+                requestCode++;
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     public void notify(String notificationId, String apiKey, String title,
             String message, String uri) {
@@ -69,18 +97,7 @@ public class Notifier {
             }
 
             // Notification
-            Notification notification = new Notification();
-            notification.icon = getNotificationIcon();
-            notification.defaults = Notification.DEFAULT_LIGHTS;
-            if (isNotificationSoundEnabled()) {
-                notification.defaults |= Notification.DEFAULT_SOUND;
-            }
-            if (isNotificationVibrateEnabled()) {
-                notification.defaults |= Notification.DEFAULT_VIBRATE;
-            }
-            notification.flags |= Notification.FLAG_AUTO_CANCEL;
-            notification.when = System.currentTimeMillis();
-            notification.tickerText = message;
+            Notification notification =createNotification(message);
 
             //            Intent intent;
             //            if (uri != null
@@ -152,6 +169,22 @@ public class Notifier {
         } else {
             Log.w(LOGTAG, "Notificaitons disabled.");
         }
+    }
+
+    private Notification createNotification(String message) {
+        Notification notification = new Notification();
+        notification.icon = getNotificationIcon();
+        notification.defaults = Notification.DEFAULT_LIGHTS;
+        if (isNotificationSoundEnabled()) {
+            notification.defaults |= Notification.DEFAULT_SOUND;
+        }
+        if (isNotificationVibrateEnabled()) {
+            notification.defaults |= Notification.DEFAULT_VIBRATE;
+        }
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        notification.when = System.currentTimeMillis();
+        notification.tickerText = message;
+        return notification;
     }
 
     private int getNotificationIcon() {
