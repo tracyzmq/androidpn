@@ -242,6 +242,7 @@ public class ConnectionConfiguration implements Cloneable {
             try {
                 InetAddress address = InetAddress.getByName(host);
                 host =  address.getHostAddress();
+                Log.d(LOG_TAG, "transform host name to host address:"+host);
             } catch (UnknownHostException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
             }

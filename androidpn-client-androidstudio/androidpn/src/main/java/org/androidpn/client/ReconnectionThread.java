@@ -37,7 +37,7 @@ public class ReconnectionThread extends Thread {
     }
 
     public void run() {
-        waiting = 0;
+        //waiting = 0;
         try {
             while (!isInterrupted()) {
                 Log.d(LOGTAG, "Trying to reconnect in " + waiting()

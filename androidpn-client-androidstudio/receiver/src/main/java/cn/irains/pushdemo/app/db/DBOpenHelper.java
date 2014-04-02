@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.androidpn.client.Constants;
 import org.androidpn.client.LogUtil;
 
 /**
@@ -22,10 +23,6 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         super(context, DBConsts.DB_NAME, null, DBConsts.DB_VERSION);
     }
 
-    public DBOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
-    }
-
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.i(LOG_TAG, "create database");
@@ -35,6 +32,12 @@ public class DBOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        if(newVersion <= oldVersion) {
+            return;
+        }
 
+        if(oldVersion == 1 ) {
+            db.execSQL(DBConsts.UPDATE_TABLE_IQ_FROM_1);
+        }
     }
 }

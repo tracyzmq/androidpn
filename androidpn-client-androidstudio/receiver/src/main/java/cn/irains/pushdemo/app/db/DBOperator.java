@@ -32,6 +32,7 @@ public class DBOperator {
         cv.put(DBConsts.COL_TITLE, iq.getTitle());
         cv.put(DBConsts.COL_MSG, iq.getMessage());
         cv.put(DBConsts.COL_URI, iq.getUri());
+        cv.put(DBConsts.COL_TIME, iq.getTime());
         SQLiteDatabase dbWriter = dbOpenHelper.getWritableDatabase();
         dbWriter.insert(DBConsts.TABLE_IQ, null, cv);
         dbWriter.close();;
@@ -53,6 +54,7 @@ public class DBOperator {
         final int msgIndex = cursor.getColumnIndex(DBConsts.COL_MSG);
         final int titleIndex = cursor.getColumnIndex(DBConsts.COL_TITLE);
         final int uriIndex = cursor.getColumnIndex(DBConsts.COL_URI);
+        final int timeIndex = cursor.getColumnIndex(DBConsts.COL_TIME);
         while(cursor.moveToNext()){
             NotifyIQ iq = new NotifyIQ();
             iq.setId(cursor.getString(idIndex));
@@ -60,6 +62,7 @@ public class DBOperator {
             iq.setMessage(cursor.getString(msgIndex));
             iq.setTitle(cursor.getString(titleIndex));
             iq.setUri(cursor.getString(uriIndex));
+            iq.setTime(cursor.getString(timeIndex));
             notifyIQs.add(iq);
         }
         cursor.close();
@@ -78,6 +81,7 @@ public class DBOperator {
             iq.setMessage(CursorUtil.getString(cursor, DBConsts.COL_MSG));
             iq.setTitle(CursorUtil.getString(cursor, DBConsts.COL_TITLE));
             iq.setUri(CursorUtil.getString(cursor, DBConsts.COL_URI));
+            iq.setTime(CursorUtil.getString(cursor, DBConsts.COL_TIME));
         }
         cursor.close();
         dbReader.close();

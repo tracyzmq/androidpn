@@ -39,8 +39,8 @@ public class NotifyListActivity extends ActionBarActivity {
 //        ListAdapter adapter = new ArrayAdapter<NotifyIQ>(this, R.layout.activity_notify_item,)
         cursor = operator.queryAll();
         CursorAdapter adapter = new SimpleCursorAdapter(this,R.layout.activity_notify_item, cursor,
-                new String[]{DBConsts.COL_TITLE, DBConsts.COL_MSG, DBConsts.COL_URI},
-                new int[] {R.id.notify_list_title, R.id.notify_list_msg} );
+                new String[]{DBConsts.COL_TITLE, DBConsts.COL_MSG, DBConsts.COL_TIME},
+                new int[] {R.id.notify_list_title, R.id.notify_list_msg, R.id.notify_list_time} );
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
