@@ -17,6 +17,8 @@
  */
 package org.androidpn.server.xmpp.push;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Random;
 
 import org.androidpn.server.xmpp.session.ClientSession;
@@ -28,88 +30,112 @@ import org.dom4j.Element;
 import org.dom4j.QName;
 import org.xmpp.packet.IQ;
 
-/** 
- * This class is to manage sending the notifcations to the users.  
- *
+/**
+ * This class is to manage sending the notifcations to the users.
+ * 
  * @author Sehwan Noh (devnoh@gmail.com)
  */
 public class NotificationManager {
 
-    private static final String NOTIFICATION_NAMESPACE = "androidpn:iq:notification";
+	private static final String ELEM_URI = "uri";
 
-    private final Log log = LogFactory.getLog(getClass());
+	private static final String ELEM_MESSAGE = "message";
 
-    private SessionManager sessionManager;
+	private static final String ELEM_TITLE = "title";
 
-    /**
-     * Constructor.
-     */
-    public NotificationManager() {
-        sessionManager = SessionManager.getInstance();
-    }
+	private static final String ELEM_API_KEY = "apiKey";
 
-    /**
-     * Broadcasts a newly created notification message to all connected users.
-     * 
-     * @param apiKey the API key
-     * @param title the title
-     * @param message the message details
-     * @param uri the uri
-     */
-    public void sendBroadcast(String apiKey, String title, String message,
-            String uri) {
-        log.debug("sendBroadcast()...");
-        IQ notificationIQ = createNotificationIQ(apiKey, title, message, uri);
-        for (ClientSession session : sessionManager.getSessions()) {
-            if (session.getPresence().isAvailable()) {
-                notificationIQ.setTo(session.getAddress());
-                session.deliver(notificationIQ);
-            }
-        }
-    }
+	private static final String ELEM_ID = "id";
 
-    /**
-     * Sends a newly created notification message to the specific user.
-     * 
-     * @param apiKey the API key
-     * @param title the title
-     * @param message the message details
-     * @param uri the uri
-     */
-    public void sendNotifcationToUser(String apiKey, String username,
-            String title, String message, String uri) {
-        log.debug("sendNotifcationToUser()...");
-        IQ notificationIQ = createNotificationIQ(apiKey, title, message, uri);
-        ClientSession session = sessionManager.getSession(username);
-        if (session != null) {
-            if (session.getPresence().isAvailable()) {
-                notificationIQ.setTo(session.getAddress());
-                session.deliver(notificationIQ);
-            }
-        }
-    }
+	private static final String ELEM_TIME = "time";
 
-    /**
-     * Creates a new notification IQ and returns it.
-     */
-    private IQ createNotificationIQ(String apiKey, String title,
-            String message, String uri) {
-        Random random = new Random();
-        String id = Integer.toHexString(random.nextInt());
-        // String id = String.valueOf(System.currentTimeMillis());
+	private static final String NOTIFICATION_NAMESPACE = "androidpn:iq:notification";
 
-        Element notification = DocumentHelper.createElement(QName.get(
-                "notification", NOTIFICATION_NAMESPACE));
-        notification.addElement("id").setText(id);
-        notification.addElement("apiKey").setText(apiKey);
-        notification.addElement("title").setText(title);
-        notification.addElement("message").setText(message);
-        notification.addElement("uri").setText(uri);
+	private final Log log = LogFactory.getLog(getClass());
 
-        IQ iq = new IQ();
-        iq.setType(IQ.Type.set);
-        iq.setChildElement(notification);
+	private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM月dd日 HH时mm分");
+	
+	private SessionManager sessionManager;
 
-        return iq;
-    }
+	/**
+	 * Constructor.
+	 */
+	public NotificationManager() {
+		sessionManager = SessionManager.getInstance();
+	}
+
+	/**
+	 * Broadcasts a newly created notification message to all connected users.
+	 * 
+	 * @param apiKey
+	 *            the API key
+	 * @param title
+	 *            the title
+	 * @param message
+	 *            the message details
+	 * @param uri
+	 *            the uri
+	 */
+	public void sendBroadcast(String apiKey, String title, String message,
+			String uri) {
+		log.debug("sendBroadcast()...");
+		IQ notificationIQ = createNotificationIQ(apiKey, title, message, uri);
+		for (ClientSession session : sessionManager.getSessions()) {
+			if (session.getPresence().isAvailable()) {
+				notificationIQ.setTo(session.getAddress());
+				session.deliver(notificationIQ);
+			}
+		}
+	}
+
+	/**
+	 * Sends a newly created notification message to the specific user.
+	 * 
+	 * @param apiKey
+	 *            the API key
+	 * @param title
+	 *            the title
+	 * @param message
+	 *            the message details
+	 * @param uri
+	 *            the uri
+	 */
+	public void sendNotifcationToUser(String apiKey, String username,
+			String title, String message, String uri) {
+		log.debug("sendNotifcationToUser()...");
+		IQ notificationIQ = createNotificationIQ(apiKey, title, message, uri);
+		ClientSession session = sessionManager.getSession(username);
+		if (session != null) {
+			if (session.getPresence().isAvailable()) {
+				notificationIQ.setTo(session.getAddress());
+				session.deliver(notificationIQ);
+			}
+		}
+	}
+
+	/**
+	 * Creates a new notification IQ and returns it.
+	 */
+	private IQ createNotificationIQ(String apiKey, String title,
+			String message, String uri) {
+		Random random = new Random();
+		String id = Integer.toHexString(random.nextInt());
+		// String id = String.valueOf(System.currentTimeMillis());
+
+		Element notification = DocumentHelper.createElement(QName.get(
+				"notification", NOTIFICATION_NAMESPACE));
+		notification.addElement(ELEM_ID).setText(id);
+		notification.addElement(ELEM_API_KEY).setText(apiKey);
+		notification.addElement(ELEM_TITLE).setText(title);
+		notification.addElement(ELEM_MESSAGE).setText(message);
+		notification.addElement(ELEM_URI).setText(uri);
+		notification.addElement(ELEM_TIME).setText(dateFormat.format(Calendar.getInstance().getTime()));
+
+		IQ iq = new IQ();
+		iq.setType(IQ.Type.set);
+		iq.setChildElement(notification);
+		System.out.println(iq.getChildElement().asXML().toString());
+
+		return iq;
+	}
 }
