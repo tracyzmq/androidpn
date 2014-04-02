@@ -1,4 +1,4 @@
-﻿ANDROIDPN-SERVER README
+﻿ANDROIDPN README
 =======================
 http://androidpn.sourceforge.net/
 
@@ -8,6 +8,22 @@ This is an open source project to provide push notification support for Android
 -- a xmpp based notification server and a client tool kit. 
 
 更新By：dannytiehui@hotmail.com
+
+最新更新By: msdx(msdx.android@qq.com) 2014-4-2
+
+v0.7.0更新：
+---------------------------------
+××新功能：××
+
+androidpn-client-androidstudio
+
+1、对消息进行序列化，可直接通过intent传递对象
+2、可通过配置文件配置IQ,IQProvider, PacketListener的子类实现，及打开通知时弹出的Activity。
+3、配置的host如果为域名，可以转换为IP
+4、消息增加时间
+
+androidpn-server-bin-tomcat
+1、消息增加时间
 
 
 =======v0.6.0更新后16:36 2012/4/13================
@@ -48,9 +64,6 @@ androidpn-server-bin-tomcat：
 
 --------------------------------------------------
 新功能：
-androidpn-client-androidstudio
-对消息进行序列化，可直接通过intent传递对象
-可通过配置文件配置IQ,IQProvider, PacketListener的子类实现，及打开通知时弹出的Activity。
 
 androidpn-server
 新添加了两个接口：
@@ -78,5 +91,7 @@ androidpn-client：
     用示例程序，我连续推送2条消息，无论点击哪一条，都显示最新的那条数据。（对不上号）
     例如，我先推送标题为“A”的新闻，然后再推送标题为‘B’的新闻，这个时候，客户端收到两条推送消息，分别是A、B，无论我点击A，还是B，详情页都显示B的信息
 
-
-
+2014-4-2：
+2、修复页面路径错误(androidpn-server-bin-tomcat)
+3、更正日志文件名字拼写错误(androidpn-server-bin-tomcat)
+4、修复程序卸载重装，或清除数据时，会重新注册新用户名的问题(androidpn-client-androidstudio)
