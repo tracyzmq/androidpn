@@ -13,7 +13,7 @@ This is an open source project to provide push notification support for Android
 
 ----
 
-###========v0.7.0更新：========
+###v0.7.0更新：
 
 新功能：
 
@@ -33,7 +33,7 @@ This is an open source project to provide push notification support for Android
 
 
 
-##=======v0.6.0更新后16:36 2012/4/13================
+###v0.6.0更新后16:36 2012/4/13
 
 此开源项目包含三个部分：
 1、Android客户端示例
