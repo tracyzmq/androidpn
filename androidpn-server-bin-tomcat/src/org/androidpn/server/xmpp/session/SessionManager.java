@@ -207,6 +207,12 @@ public class SessionManager {
         public void onConnectionClose(Object handback) {
             try {
                 ClientSession session = (ClientSession) handback;
+                
+                // 判断当前要移除的Session是否与列表中同名的Session一样，如果是，表示session已重新，则不删除。
+                Session s = getSession(session.getUsername());
+                if(s != session) {
+                    return;
+                }
                 removeSession(session);
             } catch (Exception e) {
                 log.error("Could not close socket", e);
