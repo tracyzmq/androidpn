@@ -48,6 +48,8 @@ public class XmppIoHandler implements IoHandler {
 
     private static final String STANZA_HANDLER = "STANZA_HANDLER";
 
+    private static final int TIME_OUT = 180;
+    
     private String serverName;
 
     private static Map<Integer, XMPPPacketReader> parsers = new ConcurrentHashMap<Integer, XMPPPacketReader>();
@@ -91,6 +93,7 @@ public class XmppIoHandler implements IoHandler {
         // Create a new connection
         Connection connection = new Connection(session);
         session.setAttribute(CONNECTION, connection);
+        session.getConfig().setIdleTime(IdleStatus.BOTH_IDLE, TIME_OUT);
         session.setAttribute(STANZA_HANDLER, new StanzaHandler(serverName,
                 connection));
     }
