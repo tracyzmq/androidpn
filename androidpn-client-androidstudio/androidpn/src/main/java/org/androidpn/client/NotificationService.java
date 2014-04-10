@@ -15,11 +15,6 @@
  */
 package org.androidpn.client;
 
-import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -28,9 +23,15 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+
+import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Service that continues to run in background and respond to the push 
@@ -69,6 +70,8 @@ public class NotificationService extends Service {
     private SharedPreferences sharedPrefs;
 
     private String deviceId;
+
+    private PowerManager.WakeLock mWakeLock;
 
     public NotificationService() {
         notificationReceiver = new NotificationReceiver();
@@ -124,12 +127,30 @@ public class NotificationService extends Service {
     @Override
     public void onStart(Intent intent, int startId) {
         Log.d(LOGTAG, "onStart()...");
+        acquireWakeLock();
     }
 
     @Override
     public void onDestroy() {
         Log.d(LOGTAG, "onDestroy()...");
         stop();
+    }
+
+    private final void acquireWakeLock() {
+        if(mWakeLock == null) {
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, SERVICE_NAME);
+        }
+        if(mWakeLock != null) {
+            mWakeLock.acquire();
+        }
+    }
+
+    private final void releaseWakeLock() {
+        if(mWakeLock != null) {
+            mWakeLock.release();
+            mWakeLock = null;
+        }
     }
 
     @Override
@@ -239,6 +260,7 @@ public class NotificationService extends Service {
         unregisterConnectivityReceiver();
         xmppManager.disconnect();
         executorService.shutdown();
+        releaseWakeLock();
     }
 
     /**
