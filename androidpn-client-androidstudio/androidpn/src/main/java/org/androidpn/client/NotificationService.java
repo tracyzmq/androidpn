@@ -15,11 +15,7 @@
  */
 package org.androidpn.client;
 
-import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
+import android.app.Notification;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -31,6 +27,11 @@ import android.os.IBinder;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+
+import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Service that continues to run in background and respond to the push 
@@ -119,6 +120,13 @@ public class NotificationService extends Service {
                 NotificationService.this.start();
             }
         });
+        avoidBeKilled();
+    }
+
+    private void avoidBeKilled() {
+        final int ID = 1;
+        Notification notification = new Notification();
+        startForeground(ID, notification);
     }
 
     @Override
