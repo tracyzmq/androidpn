@@ -16,7 +16,6 @@
 package org.androidpn.client;
 
 import android.app.Notification;
-
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -145,23 +144,6 @@ public class NotificationService extends Service {
         stop();
     }
 
-    private final void acquireWakeLock() {
-        if(mWakeLock == null) {
-            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, SERVICE_NAME);
-        }
-        if(mWakeLock != null) {
-            mWakeLock.acquire();
-        }
-    }
-
-    private final void releaseWakeLock() {
-        if(mWakeLock != null) {
-            mWakeLock.release();
-            mWakeLock = null;
-        }
-    }
-
     @Override
     public IBinder onBind(Intent intent) {
         Log.d(LOGTAG, "onBind()...");
@@ -177,6 +159,23 @@ public class NotificationService extends Service {
     public boolean onUnbind(Intent intent) {
         Log.d(LOGTAG, "onUnbind()...");
         return true;
+    }
+
+    private final void acquireWakeLock() {
+        if(mWakeLock == null) {
+            PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
+            mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, SERVICE_NAME);
+        }
+        if(mWakeLock != null) {
+            mWakeLock.acquire();
+        }
+    }
+
+    private final void releaseWakeLock() {
+        if(mWakeLock != null) {
+            mWakeLock.release();
+            mWakeLock = null;
+        }
     }
 
     public static Intent getIntent() {
