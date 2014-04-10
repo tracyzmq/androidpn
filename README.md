@@ -9,9 +9,17 @@ This is an open source project to provide push notification support for Android
 
 更新By：dannytiehui@hotmail.com
 
-最新更新By: msdx(msdx.android@qq.com) 2014-4-2
+最新更新By: msdx(msdx.android@qq.com) 2014-04-10
 
 ----
+###v0.7.1更新(2014-04-10 09:57:45):
+1、服务端session被移除导致掉线的BUG
+<br/>
+2、客户端service会被内存清理工具停止的BUG
+<br/>
+3、锁屏后会掉线的问题
+<br/>
+4、连接成功后，重连次数不清零问题（导致下次重连的时间较大）
 
 ###v0.7.0更新：
 
