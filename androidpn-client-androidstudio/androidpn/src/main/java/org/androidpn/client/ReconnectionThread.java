@@ -37,7 +37,6 @@ public class ReconnectionThread extends Thread {
     }
 
     public void run() {
-        //waiting = 0;
         try {
             while (!isInterrupted()) {
                 Log.d(LOGTAG, "Trying to reconnect in " + waiting()
@@ -66,5 +65,12 @@ public class ReconnectionThread extends Thread {
             return 60;
         }
         return waiting < 30 ? 300 : 600;
+    }
+
+    /**
+     * 重置等待次数。该方法将会在重连成功时调用。
+     */
+    public void resetWaiting() {
+        waiting = 0;
     }
 }

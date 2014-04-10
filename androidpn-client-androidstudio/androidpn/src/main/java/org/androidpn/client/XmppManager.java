@@ -223,6 +223,7 @@ public class XmppManager {
             }
         }
         taskTracker.decrease();
+        ((ReconnectionThread)reconnection).resetWaiting();
         Log.d(LOGTAG, "runTask()...done");
     }
 
