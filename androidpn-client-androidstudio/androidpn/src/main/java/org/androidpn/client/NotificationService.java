@@ -15,6 +15,8 @@
  */
 package org.androidpn.client;
 
+import android.app.Notification;
+
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -122,6 +124,13 @@ public class NotificationService extends Service {
                 NotificationService.this.start();
             }
         });
+        avoidBeKilled();
+    }
+
+    private void avoidBeKilled() {
+        final int ID = 1;
+        Notification notification = new Notification();
+        startForeground(ID, notification);
     }
 
     @Override
