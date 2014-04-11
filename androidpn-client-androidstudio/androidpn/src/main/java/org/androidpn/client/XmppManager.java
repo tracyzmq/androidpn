@@ -223,7 +223,6 @@ public class XmppManager {
             }
         }
         taskTracker.decrease();
-        ((ReconnectionThread)reconnection).resetWaiting();
         Log.d(LOGTAG, "runTask()...done");
     }
 
@@ -502,13 +501,12 @@ public class XmppManager {
                             + e.getMessage());
                     xmppManager.startReconnectionThread();
                 }
-
-                xmppManager.runTask();
+                        xmppManager.runTask();
             } else {
                 Log.i(LOGTAG, "Logged in already");
                 xmppManager.runTask();
             }
-
+            ((ReconnectionThread)reconnection).resetWaiting();
         }
     }
 
