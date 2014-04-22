@@ -11,6 +11,9 @@ This is an open source project to provide push notification support for Android
 
 最新更新By: msdx(msdx.android@qq.com) 2014-04-10
 
+注：androidpn的客户端修改较大，不便于与原来项目合并，已另立项目维护：https://github.com/msdx/APNBB
+
+
 ----
 ###v0.7.1更新(2014-04-10 09:57:45):
 1、服务端session被移除导致掉线的BUG
