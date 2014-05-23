@@ -1,4 +1,4 @@
-ANDROIDPN README
+vANDROIDPN README
 =======================
 http://androidpn.sourceforge.net/
 
@@ -9,9 +9,17 @@ This is an open source project to provide push notification support for Android
 
 更新By：dannytiehui@hotmail.com
 
-最新更新By: msdx(msdx.android@qq.com) 2014-04-10
+最新更新By: msdx(msdx.android@qq.com) 2014-05-23
+
+*注：androidpn的客户端修改较大，不便于与原来项目合并，已另立项目维护：https://github.com/msdx/APNBB*
 
 ----
+###v0.8更新
+1. 增加发送离线消息功能
+2. 增加回执功能。
+
+注：回执功能需要客户端也作相应修改，请使用我另立的项目[APNBB](https://github.com/msdx/APNBB ) 的客户端。本项目的客户端我已停止维护。
+
 ###v0.7.1更新(2014-04-10 09:57:45):
 1、服务端session被移除导致掉线的BUG
 <br/>
