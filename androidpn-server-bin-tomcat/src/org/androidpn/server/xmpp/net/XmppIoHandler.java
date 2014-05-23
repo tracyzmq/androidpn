@@ -113,10 +113,6 @@ public class XmppIoHandler implements IoHandler {
     public void sessionIdle(IoSession session, IdleStatus status)
             throws Exception {
         log.debug("sessionIdle()...");
-        if(session.isConnected()) {
-            log.debug("the session is still connect...do nothing.");
-            return;
-        }
         Connection connection = (Connection) session.getAttribute(CONNECTION);
         if (log.isDebugEnabled()) {
             log.debug("Closing connection that has been idle: " + connection);
