@@ -19,9 +19,15 @@ package org.androidpn.server.xmpp.net;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.List;
 import java.util.Random;
 
+import org.androidpn.server.model.Notification;
+import org.androidpn.server.model.Notification.Status;
+import org.androidpn.server.service.NotificationService;
+import org.androidpn.server.service.ServiceLocator;
 import org.androidpn.server.util.Config;
+import org.androidpn.server.xmpp.push.NotificationManager;
 import org.androidpn.server.xmpp.router.PacketRouter;
 import org.androidpn.server.xmpp.session.ClientSession;
 import org.androidpn.server.xmpp.session.Session;
@@ -59,6 +65,9 @@ public class StanzaHandler {
     private boolean startedTLS = false;
 
     private PacketRouter router;
+    
+    private NotificationService notificationService;
+    private NotificationManager notificationManager;
 
     /**
      * Constructor.
@@ -70,6 +79,8 @@ public class StanzaHandler {
         this.serverName = serverName;
         this.connection = connection;
         this.router = new PacketRouter();
+        notificationService = ServiceLocator.getNotificationService();
+        notificationManager = new NotificationManager();
     }
 
     /**
@@ -183,7 +194,43 @@ public class StanzaHandler {
         packet.setFrom(session.getAddress());
         router.route(packet);
         session.incrementClientPacketCount();
+        
+        sendOffLineMessage(session, packet);
     }
+    
+    private void sendOffLineMessage(Session session, Presence packet) {
+        if(session.getStatus() == Session.STATUS_AUTHENTICATED && packet.isAvailable()) {
+            String username = session.getAddress().getNode();
+            if(username != null && !username.equals("")) {
+                sendNotReceiveMessage(username);
+                sendNotSendMessage(username);
+            } else {
+                log.warn("username is null ...");
+            }
+        }
+    }
+
+    private void sendNotReceiveMessage(String username) {
+        Notification condition = new Notification();
+        condition.setUsername(username);
+        condition.setStatus(Status.SEND);
+        List<Notification> notifications = notificationService.queryNotification(condition);
+        for (Notification notification : notifications) {
+            notificationManager.sendOfflineNotification(notification);
+        }
+    }
+
+    private void sendNotSendMessage(String username) {
+        Notification condition = new Notification();
+        condition.setUsername(username);
+        condition.setStatus(Status.NOT_SEND);
+        List<Notification> notifications = notificationService.queryNotification(condition);
+        for (Notification notification : notifications) {
+            notificationManager.sendOfflineNotification(notification);
+        }
+    }
+    
+    
 
     private void processIQ(Element doc) {
         log.debug("processIQ()...");

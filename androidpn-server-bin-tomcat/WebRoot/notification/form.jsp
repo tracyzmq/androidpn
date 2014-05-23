@@ -18,7 +18,8 @@
 <tr>
 	<td width="20%">To:</td>
 	<td width="80%">
-		<input type="radio" name="broadcast" value="Y" checked="checked" />  All (Broadcast) 
+		<input type="radio" name="broadcast" value="A" />  All (Broadcast) 
+		<input type="radio" name="broadcast" value="Y" checked="checked" />  Online (Broadcast) 
         <input type="radio" name="broadcast" value="N" /> Single Device 
 	</td>
 </tr>
@@ -59,14 +60,14 @@
  
 $(function() {
 	$('input[name=broadcast]').click(function() {
-		if ($('input[name=broadcast]')[0].checked) {
+		if ($('input[name=broadcast]')[0].checked || $('input[name=broadcast]')[1].checked) {
 			$('#trUsername').hide();
 		} else {
 			$('#trUsername').show();
 		}
 	});
 	
-	if ($('input[name=broadcast]')[0].checked) {
+	if ($('input[name=broadcast]')[0].checked || $('input[name=broadcast]')[1].checked) {
 		$('#trUsername').hide();
 	} else {
 		$('#trUsername').show();

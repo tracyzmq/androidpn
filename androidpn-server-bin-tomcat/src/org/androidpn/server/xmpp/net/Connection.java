@@ -17,7 +17,9 @@
  */
 package org.androidpn.server.xmpp.net;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
@@ -299,8 +301,11 @@ public class Connection {
      * @throws UnknownHostException if IP address of host could not be determined.
      */
     public String getHostAddress() throws UnknownHostException {
-        return ((InetSocketAddress) ioSession.getRemoteAddress()).getAddress()
-                .getHostAddress();
+        SocketAddress address = ioSession.getRemoteAddress();
+        InetAddress iaddress = ((InetSocketAddress)address).getAddress();
+        return iaddress.getHostAddress();
+//        return ((InetSocketAddress) ioSession.getRemoteAddress()).getAddress()
+//                .getHostAddress();
     }
 
     /**
