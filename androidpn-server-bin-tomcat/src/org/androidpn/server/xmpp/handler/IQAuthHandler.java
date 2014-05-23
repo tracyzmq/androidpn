@@ -33,9 +33,9 @@ import org.xmpp.packet.IQ;
 import org.xmpp.packet.JID;
 import org.xmpp.packet.PacketError;
 
-/** 
+/**
  * This class is to handle the TYPE_IQ jabber:iq:auth protocol.
- *
+ * 
  * @author Sehwan Noh (devnoh@gmail.com)
  */
 public class IQAuthHandler extends IQHandler {
@@ -48,8 +48,7 @@ public class IQAuthHandler extends IQHandler {
      * Constructor.
      */
     public IQAuthHandler() {
-        probeResponse = DocumentHelper.createElement(QName.get("query",
-                NAMESPACE));
+        probeResponse = DocumentHelper.createElement(QName.get("query", NAMESPACE));
         probeResponse.addElement("username");
         if (AuthManager.isPlainSupported()) {
             probeResponse.addElement("password");
@@ -58,14 +57,17 @@ public class IQAuthHandler extends IQHandler {
             probeResponse.addElement("digest");
         }
         probeResponse.addElement("resource");
+
     }
 
     /**
      * Handles the received IQ packet.
      * 
-     * @param packet the packet
+     * @param packet
+     *            the packet
      * @return the response to send back
-     * @throws UnauthorizedException if the user is not authorized
+     * @throws UnauthorizedException
+     *             if the user is not authorized
      */
     public IQ handleIQ(IQ packet) throws UnauthorizedException {
         IQ reply = null;
@@ -108,24 +110,20 @@ public class IQAuthHandler extends IQHandler {
                     try {
                         resource = JID.resourceprep(resource);
                     } catch (StringprepException e) {
-                        throw new UnauthorizedException("Invalid resource: "
-                                + resource, e);
+                        throw new UnauthorizedException("Invalid resource: " + resource, e);
                     }
                 } else {
-                    throw new IllegalArgumentException(
-                            "Invalid resource (empty or null).");
+                    throw new IllegalArgumentException("Invalid resource (empty or null).");
                 }
 
                 // Verify the username
                 if (username == null || username.trim().length() == 0) {
-                    throw new UnauthorizedException(
-                            "Invalid username (empty or null).");
+                    throw new UnauthorizedException("Invalid username (empty or null).");
                 }
                 try {
                     Stringprep.nodeprep(username);
                 } catch (StringprepException e) {
-                    throw new UnauthorizedException("Invalid username: "
-                            + username, e);
+                    throw new UnauthorizedException("Invalid username: " + username, e);
                 }
                 username = username.toLowerCase();
 
@@ -134,8 +132,8 @@ public class IQAuthHandler extends IQHandler {
                 if (password != null && AuthManager.isPlainSupported()) {
                     token = AuthManager.authenticate(username, password);
                 } else if (digest != null && AuthManager.isDigestSupported()) {
-                    token = AuthManager.authenticate(username, session
-                            .getStreamID().toString(), digest);
+                    token = AuthManager.authenticate(username, session.getStreamID().toString(),
+                            digest);
                 }
 
                 if (token == null) {
@@ -146,6 +144,7 @@ public class IQAuthHandler extends IQHandler {
                 session.setAuthToken(token, resource);
                 packet.setFrom(session.getAddress());
                 reply = IQ.createResultIQ(packet);
+
             }
         } catch (Exception ex) {
             log.error(ex);

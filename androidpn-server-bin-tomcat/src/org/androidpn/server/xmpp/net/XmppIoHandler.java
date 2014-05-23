@@ -47,8 +47,8 @@ public class XmppIoHandler implements IoHandler {
     private static final String CONNECTION = "CONNECTION";
 
     private static final String STANZA_HANDLER = "STANZA_HANDLER";
-
-    private static final int TIME_OUT = 180;
+    
+    private static final int IDLE_TIME = 180;
     
     private String serverName;
 
@@ -78,7 +78,7 @@ public class XmppIoHandler implements IoHandler {
      */
     public void sessionCreated(IoSession session) throws Exception {
         log.debug("sessionCreated()...");
-        session.getConfig().setIdleTime(IdleStatus.BOTH_IDLE, 180);
+        session.getConfig().setBothIdleTime(IDLE_TIME);;
     }
 
     /**
@@ -93,7 +93,6 @@ public class XmppIoHandler implements IoHandler {
         // Create a new connection
         Connection connection = new Connection(session);
         session.setAttribute(CONNECTION, connection);
-        session.getConfig().setIdleTime(IdleStatus.BOTH_IDLE, TIME_OUT);
         session.setAttribute(STANZA_HANDLER, new StanzaHandler(serverName,
                 connection));
     }

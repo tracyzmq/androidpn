@@ -19,45 +19,42 @@ import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 public class NotificationApiController extends MultiActionController {
 
-	private NotificationManager notificationManager;
+    private NotificationManager notificationManager;
 
-	public NotificationApiController() {
-		notificationManager = new NotificationManager();
-	}
+    public NotificationApiController() {
+        notificationManager = new NotificationManager();
+    }
 
-	public ModelAndView list(HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		ModelAndView mav = new ModelAndView();
-		// mav.addObject("list", null);
-		mav.setViewName("notification/form");
-		return mav;
-	}
+    public ModelAndView list(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        ModelAndView mav = new ModelAndView();
+        // mav.addObject("list", null);
+        mav.setViewName("notification/form");
+        return mav;
+    }
 
-	public void send(HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		String broadcast = ServletRequestUtils.getStringParameter(request,
-				"broadcast", "Y");
-		String username = ServletRequestUtils.getStringParameter(request,
-				"username");
-		String title = ServletRequestUtils.getStringParameter(request, "title");
-		String message = ServletRequestUtils.getStringParameter(request,
-				"message");
-		String uri = ServletRequestUtils.getStringParameter(request, "uri");
+    public void send(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String broadcast = ServletRequestUtils.getStringParameter(request, "broadcast", "Y");
+        String username = ServletRequestUtils.getStringParameter(request, "username");
+        String title = ServletRequestUtils.getStringParameter(request, "title");
+        String message = ServletRequestUtils.getStringParameter(request, "message");
+        String uri = ServletRequestUtils.getStringParameter(request, "uri");
 
-		String apiKey = Config.getString("apiKey", "");
-		logger.debug("apiKey=" + apiKey);
+        String apiKey = Config.getString("apiKey", "");
+        logger.debug("apiKey=" + apiKey);
 
-		if (broadcast.equalsIgnoreCase("Y")) {
-			notificationManager.sendBroadcast(apiKey, title, message, uri);
-		} else {
-			notificationManager.sendNotifcationToUser(apiKey, username, title,
-					message, uri);
-		}
-		
-		response.getWriter().print("{\"result\":\"0\",\"description\":\"success\"}");
-//		ModelAndView mav = new ModelAndView();
-//		mav.setViewName("redirect:notification.do");
-//		return mav;
-	}
+        if (broadcast.equalsIgnoreCase("Y")) {
+            notificationManager.sendBroadcastToOnline(apiKey, title, message, uri);
+        } else if (broadcast.equalsIgnoreCase("A")) {
+            notificationManager.sendBroadcastToAll(apiKey, title, message, uri);
+        } else {
+            notificationManager.sendNotifcationToUser(apiKey, username, title, message, uri);
+        }
+
+        response.getWriter().print("{\"result\":\"0\",\"description\":\"success\"}");
+        // ModelAndView mav = new ModelAndView();
+        // mav.setViewName("redirect:notification.do");
+        // return mav;
+    }
 
 }

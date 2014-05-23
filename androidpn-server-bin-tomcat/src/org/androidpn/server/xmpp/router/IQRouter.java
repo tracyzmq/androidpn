@@ -17,11 +17,15 @@
  */
 package org.androidpn.server.xmpp.router;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.androidpn.server.model.Notification;
+import org.androidpn.server.service.NotificationService;
+import org.androidpn.server.service.ServiceLocator;
 import org.androidpn.server.xmpp.handler.IQAuthHandler;
 import org.androidpn.server.xmpp.handler.IQHandler;
 import org.androidpn.server.xmpp.handler.IQRegisterHandler;
@@ -36,9 +40,9 @@ import org.xmpp.packet.IQ;
 import org.xmpp.packet.JID;
 import org.xmpp.packet.PacketError;
 
-/** 
+/**
  * This class is to route IQ packets to their corresponding handler.
- *
+ * 
  * @author Sehwan Noh (devnoh@gmail.com)
  */
 public class IQRouter {
@@ -51,6 +55,8 @@ public class IQRouter {
 
     private Map<String, IQHandler> namespace2Handlers = new ConcurrentHashMap<String, IQHandler>();
 
+    private NotificationService notificationService;
+
     /**
      * Constucts a packet router registering new IQ handlers.
      */
@@ -59,12 +65,14 @@ public class IQRouter {
         iqHandlers.add(new IQAuthHandler());
         iqHandlers.add(new IQRegisterHandler());
         iqHandlers.add(new IQRosterHandler());
+        notificationService = ServiceLocator.getNotificationService();
     }
 
     /**
      * Routes the IQ packet based on its namespace.
      * 
-     * @param packet the packet to route
+     * @param packet
+     *            the packet to route
      */
     public void route(IQ packet) {
         if (packet == null) {
@@ -75,11 +83,9 @@ public class IQRouter {
 
         if (session == null
                 || session.getStatus() == Session.STATUS_AUTHENTICATED
-                || ("jabber:iq:auth".equals(packet.getChildElement()
-                        .getNamespaceURI())
-                        || "jabber:iq:register".equals(packet.getChildElement()
-                                .getNamespaceURI()) || "urn:ietf:params:xml:ns:xmpp-bind"
-                        .equals(packet.getChildElement().getNamespaceURI()))) {
+                || ("jabber:iq:auth".equals(packet.getChildElement().getNamespaceURI())
+                        || "jabber:iq:register".equals(packet.getChildElement().getNamespaceURI()) || "urn:ietf:params:xml:ns:xmpp-bind"
+                            .equals(packet.getChildElement().getNamespaceURI()))) {
             handle(packet);
         } else {
             IQ reply = IQ.createResultIQ(packet);
@@ -97,15 +103,19 @@ public class IQRouter {
                 namespace = childElement.getNamespaceURI();
             }
             if (namespace == null) {
-                if (packet.getType() != IQ.Type.result
-                        && packet.getType() != IQ.Type.error) {
+                if (packet.getType() != IQ.Type.result && packet.getType() != IQ.Type.error) {
                     log.warn("Unknown packet " + packet);
+                } else if (packet.getType() == IQ.Type.result) {
+                    // 回执处理
+                    String id = packet.getID();
+                    JID from = packet.getFrom();
+                    String username = from.getNode();
+                    updateNotification(id, username);
                 }
             } else {
                 IQHandler handler = getHandler(namespace);
                 if (handler == null) {
-                    sendErrorPacket(packet,
-                            PacketError.Condition.service_unavailable);
+                    sendErrorPacket(packet, PacketError.Condition.service_unavailable);
                 } else {
                     handler.process(packet);
                 }
@@ -125,11 +135,9 @@ public class IQRouter {
     /**
      * Senda the error packet to the original sender
      */
-    private void sendErrorPacket(IQ originalPacket,
-            PacketError.Condition condition) {
+    private void sendErrorPacket(IQ originalPacket, PacketError.Condition condition) {
         if (IQ.Type.error == originalPacket.getType()) {
-            log.error("Cannot reply an IQ error to another IQ error: "
-                    + originalPacket);
+            log.error("Cannot reply an IQ error to another IQ error: " + originalPacket);
             return;
         }
         IQ reply = IQ.createResultIQ(originalPacket);
@@ -145,12 +153,12 @@ public class IQRouter {
     /**
      * Adds a new IQHandler to the list of registered handler.
      * 
-     * @param handler the IQHandler
+     * @param handler
+     *            the IQHandler
      */
     public void addHandler(IQHandler handler) {
         if (iqHandlers.contains(handler)) {
-            throw new IllegalArgumentException(
-                    "IQHandler already provided by the server");
+            throw new IllegalArgumentException("IQHandler already provided by the server");
         }
         namespace2Handlers.put(handler.getNamespace(), handler);
     }
@@ -158,12 +166,12 @@ public class IQRouter {
     /**
      * Removes an IQHandler from the list of registered handler.
      * 
-     * @param handler the IQHandler
+     * @param handler
+     *            the IQHandler
      */
     public void removeHandler(IQHandler handler) {
         if (iqHandlers.contains(handler)) {
-            throw new IllegalArgumentException(
-                    "Cannot remove an IQHandler provided by the server");
+            throw new IllegalArgumentException("Cannot remove an IQHandler provided by the server");
         }
         namespace2Handlers.remove(handler.getNamespace());
     }
@@ -185,4 +193,16 @@ public class IQRouter {
         return handler;
     }
 
+    /**
+     * 据原作者注释，此方法可能不够严谨，因为可能查询到多条记录，那样会导致修改到错误的记录。
+     * 比如a,b两条记录碰巧ID和用户名都一样，此时查看的是a记录，但查询出来的是b记录，那么通知状态就改错了。 此代码待以后审核。
+     */
+    private void updateNotification(String id, String username) {
+        Notification notification = notificationService.queryNotificationByUsername(username, id);
+        if (notification != null) {
+            notification.setStatus(Notification.Status.RECEIVED);
+            notification.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+            notificationService.updateNotification(notification);
+        }
+    }
 }
